@@ -4,7 +4,3 @@
 	'declensions.pro',
 	'statements.pro'
 	].
-
-main :-
-	article(der, mas, D),
-	write(D), nl.

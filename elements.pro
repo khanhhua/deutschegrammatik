@@ -1,16 +1,16 @@
-article("der", nom, mas, def).
-article("die", nom, fem, def).
-article("das", nom, neu, def).
+article(nom, mas, def, "der").
+article(nom, fem, def, "die").
+article(nom, neu, def, "das").
 
-article("ein", nom, mas, indef).
-article("eine", nom, fem, indef).
-article("ein", nom, neu, indef).
+article(nom, mas, indef, "ein").
+article(nom, fem, indef, "eine").
+article(nom, neu, indef, "ein").
 
 
-article("den", acc, mas, def).
-article("die", acc, fem, def).
-article("das", acc, neu, def).
+article(acc, mas, def, "den").
+article(acc, fem, def, "die").
+article(acc, neu, def, "das").
 
-article("einen", acc, mas, indef).
-article("eine", acc, fem, indef).
-article("ein", acc, neu, indef).
+article(acc, mas, indef, "einen").
+article(acc, fem, indef, "eine").
+article(acc, neu, indef, "ein").
