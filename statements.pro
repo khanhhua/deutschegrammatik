@@ -1,9 +1,14 @@
 sow_complement(weak, strong).
 sow_complement(strong, weak).
 
-nominative(Definite, Substantive, Out) :-
+nominative(Article, Substantive, Out) :-
     subs(Substantive, Gender),
-    article(nom, Gender, Definite, _Sow, Article),
+    article(nom, Gender, Sow, Article),
+    ( definite(Article) ->
+        Sow = strong
+    ; indefinite(Article) ->
+        Sow = weak
+    ),
     Out = [Article, Substantive].
 
 nominative(Adjective, Substantive, Out) :-
@@ -13,19 +18,29 @@ nominative(Adjective, Substantive, Out) :-
     string_concat(Adjective, Ending, DeclinatedAdjective),
     Out = [DeclinatedAdjective, Substantive].
 
-nominative(Definite, Adjective, Substantive, Out) :-
+nominative(Article, Adjective, Substantive, Out) :-
     subs(Substantive, Gender),
-    article(nom, Gender, Definite, SowArticle, Article),
+    article(nom, Gender, SowArticle, Article),
     adjective(Adjective),
     sow_complement(SowArticle, SowAdjective),
     declension(nom, singular, SowAdjective, Gender, Ending),
     string_concat(Adjective, Ending, DeclinatedAdjective),
+    ( definite(Article) ->
+        SowArticle = strong
+    ; indefinite(Article) ->
+        SowArticle = weak
+    ),
     Out = [Article, DeclinatedAdjective, Substantive].
 
 
-accusative(Definite, Substantive, Out) :-
+accusative(Article, Substantive, Out) :-
+    article(acc, Gender, SowArticle, Article),
     subs(Substantive, Gender),
-    article(acc, Gender, Definite, _Sow, Article),
+    ( definite(Article) ->
+        SowArticle = strong
+    ; indefinite(Article) ->
+        SowArticle = weak
+    ),
     Out = [Article, Substantive].
 
 accusative(Adjective, Substantive, Out) :-
@@ -35,27 +50,25 @@ accusative(Adjective, Substantive, Out) :-
     string_concat(Adjective, Ending, DeclinatedAdjective),
     Out = [DeclinatedAdjective, Substantive].
 
-accusative(Definite, Adjective, Substantive, Out) :-
+accusative(Article, Adjective, Substantive, Out) :-
     subs(Substantive, Gender),
-    article(acc, Gender, Definite, SowArticle, Article),
+    article(acc, Gender, SowArticle, Article),
     adjective(Adjective),
     sow_complement(SowArticle, SowAdjective),
     declension(acc, singular, SowAdjective, Gender, Ending),
     string_concat(Adjective, Ending, DeclinatedAdjective),
+    ( definite(Article) ->
+        SowArticle = strong
+    ; indefinite(Article) ->
+        SowArticle = weak
+    ),
     Out = [Article, DeclinatedAdjective, Substantive].
 
-dative(Definite, Adjective, Substantive, Out) :-
-    subs(Substantive, Gender),
-    article(dat, Gender, Definite, SowArticle, Article),
-    adjective(Adjective),
-    sow_complement(SowArticle, SowAdjective),
-    declension(dat, singular, SowAdjective, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [Article, DeclinatedAdjective, Substantive].
 
 dative(Definite, Substantive, Out) :-
     subs(Substantive, Gender),
-    article(dat, Gender, Definite, _SowArticle, Article),
+    article(dat, Gender, SowArticle, Article),
+    SowArticle = strong,
     Out = [Article, Substantive].
 
 dative(Adjective, Substantive, Out) :-
@@ -64,3 +77,11 @@ dative(Adjective, Substantive, Out) :-
     declension(dat, singular, strong, Gender, Ending),
     string_concat(Adjective, Ending, DeclinatedAdjective),
     Out = [DeclinatedAdjective, Substantive].
+
+dative(Article, Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    article(dat, Gender, strong, Article),
+    adjective(Adjective),
+    declension(dat, singular, weak, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [Article, DeclinatedAdjective, Substantive].
