@@ -64,7 +64,7 @@ declension(nom, singular, strong, neu, "es").
 %% ACCUSATIVE
 declension(acc, singular, weak, mas, "en").
 declension(acc, singular, weak, fem, "e").
-declension(acc, singular, weak, neu, "es").
+declension(acc, singular, weak, neu, "e").
 
 declension(acc, singular, strong, mas, "en").
 declension(acc, singular, strong, fem, "e").
@@ -77,7 +77,7 @@ declension(dat, singular, weak, neu, "en").
 
 declension(dat, singular, strong, mas, "em").
 declension(dat, singular, strong, fem, "er").
-declension(dat, singular, strong, neu, "es").
+declension(dat, singular, strong, neu, "em").
 
 
 %% =========================================
@@ -108,12 +108,12 @@ nominative(Article, Adjective, Substantive, Out) :-
     sow_complement(SowArticle, SowAdjective),
     declension(nom, singular, SowAdjective, Gender, Ending),
     string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [Article, DeclinatedAdjective, Substantive],
     ( definite(Article) ->
         SowArticle = strong
     ; indefinite(Article) ->
         SowArticle = weak
-    ),
-    Out = [Article, DeclinatedAdjective, Substantive].
+    ).
 
 
 accusative(Article, Substantive, Out) :-
@@ -140,12 +140,12 @@ accusative(Article, Adjective, Substantive, Out) :-
     sow_complement(SowArticle, SowAdjective),
     declension(acc, singular, SowAdjective, Gender, Ending),
     string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [Article, DeclinatedAdjective, Substantive],
     ( definite(Article) ->
         SowArticle = strong
     ; indefinite(Article) ->
         SowArticle = weak
-    ),
-    Out = [Article, DeclinatedAdjective, Substantive].
+    ).
 
 
 dative(Article, Substantive, Out) :-
