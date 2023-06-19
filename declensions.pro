@@ -1,54 +1,54 @@
 %% ARTICLE DECLENSION
 %% NOMINATIVE
-article(nom, mas, strong, "der").
-article(nom, fem, strong, "die").
-article(nom, neu, strong, "das").
+article(nom, singular, mas, strong, "der").
+article(nom, singular, fem, strong, "die").
+article(nom, singular, neu, strong, "das").
 
-article(nom, mas, strong, "solcher").
-article(nom, fem, strong, "solche").
-article(nom, neu, strong, "solches").
+article(nom, singular, mas, strong, "solcher").
+article(nom, singular, fem, strong, "solche").
+article(nom, singular, neu, strong, "solches").
 
-article(nom, mas, weak, "ein").
-article(nom, fem, weak, "eine").
-article(nom, neu, weak, "ein").
+article(nom, singular, mas, weak, "ein").
+article(nom, singular, fem, weak, "eine").
+article(nom, singular, neu, weak, "ein").
 
-article(nom, mas, weak, "kein").
-article(nom, fem, weak, "keine").
-article(nom, neu, weak, "kein").
+article(nom, singular, mas, weak, "kein").
+article(nom, singular, fem, weak, "keine").
+article(nom, singular, neu, weak, "kein").
 
 %% ACCUSATIVE
-article(acc, mas, strong, "den").
-article(acc, fem, strong, "die").
-article(acc, neu, strong, "das").
+article(acc, singular, mas, strong, "den").
+article(acc, singular, fem, strong, "die").
+article(acc, singular, neu, strong, "das").
 
-article(acc, mas, strong, "solchen").
-article(acc, fem, strong, "solche").
-article(acc, neu, strong, "solches").
+article(acc, singular, mas, strong, "solchen").
+article(acc, singular, fem, strong, "solche").
+article(acc, singular, neu, strong, "solches").
 
-article(acc, mas, weak, "einen").
-article(acc, fem, weak, "eine").
-article(acc, neu, weak, "ein").
+article(acc, singular, mas, weak, "einen").
+article(acc, singular, fem, weak, "eine").
+article(acc, singular, neu, weak, "ein").
 
-article(acc, mas, weak, "keinen").
-article(acc, fem, weak, "keine").
-article(acc, neu, weak, "kein").
+article(acc, singular, mas, weak, "keinen").
+article(acc, singular, fem, weak, "keine").
+article(acc, singular, neu, weak, "kein").
 
 %% DATIVE
-article(dat, mas, strong, "dem").
-article(dat, fem, strong, "der").
-article(dat, neu, strong, "dem").
+article(dat, singular, mas, strong, "dem").
+article(dat, singular, fem, strong, "der").
+article(dat, singular, neu, strong, "dem").
 
-article(dat, mas, strong, "solchem").
-article(dat, fem, strong, "solcher").
-article(dat, neu, strong, "solchem").
+article(dat, singular, mas, strong, "solchem").
+article(dat, singular, fem, strong, "solcher").
+article(dat, singular, neu, strong, "solchem").
 
-article(dat, mas, strong, "einem").
-article(dat, fem, strong, "einer").
-article(dat, neu, strong, "einem").
+article(dat, singular, mas, strong, "einem").
+article(dat, singular, fem, strong, "einer").
+article(dat, singular, neu, strong, "einem").
 
-article(dat, mas, strong, "keinem").
-article(dat, fem, strong, "keiner").
-article(dat, neu, strong, "keinem").
+article(dat, singular, mas, strong, "keinem").
+article(dat, singular, fem, strong, "keiner").
+article(dat, singular, neu, strong, "keinem").
 
 %% ADJECTIVE DECLENSION
 %% SINGULAR
@@ -78,3 +78,93 @@ declension(dat, singular, weak, neu, "en").
 declension(dat, singular, strong, mas, "em").
 declension(dat, singular, strong, fem, "er").
 declension(dat, singular, strong, neu, "es").
+
+
+%% =========================================
+sow_complement(weak, strong).
+sow_complement(strong, weak).
+
+nominative(Article, Substantive, Out) :-
+    subs(Substantive, Gender),
+    article(nom, singular, Gender, Sow, Article),
+    ( definite(Article) ->
+        Sow = strong
+    ; indefinite(Article) ->
+        Sow = weak
+    ),
+    Out = [Article, Substantive].
+
+nominative(Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    adjective(Adjective),
+    declension(nom, singular, strong, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [DeclinatedAdjective, Substantive].
+
+nominative(Article, Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    article(nom, singular, Gender, SowArticle, Article),
+    adjective(Adjective),
+    sow_complement(SowArticle, SowAdjective),
+    declension(nom, singular, SowAdjective, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    ( definite(Article) ->
+        SowArticle = strong
+    ; indefinite(Article) ->
+        SowArticle = weak
+    ),
+    Out = [Article, DeclinatedAdjective, Substantive].
+
+
+accusative(Article, Substantive, Out) :-
+    article(acc, singular, Gender, SowArticle, Article),
+    subs(Substantive, Gender),
+    ( definite(Article) ->
+        SowArticle = strong
+    ; indefinite(Article) ->
+        SowArticle = weak
+    ),
+    Out = [Article, Substantive].
+
+accusative(Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    adjective(Adjective),
+    declension(acc, singular, strong, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [DeclinatedAdjective, Substantive].
+
+accusative(Article, Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    article(acc, singular, Gender, SowArticle, Article),
+    adjective(Adjective),
+    sow_complement(SowArticle, SowAdjective),
+    declension(acc, singular, SowAdjective, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    ( definite(Article) ->
+        SowArticle = strong
+    ; indefinite(Article) ->
+        SowArticle = weak
+    ),
+    Out = [Article, DeclinatedAdjective, Substantive].
+
+
+dative(Article, Substantive, Out) :-
+    subs(Substantive, Gender),
+    article(dat, singular, Gender, SowArticle, Article),
+    SowArticle = strong,
+    Out = [Article, Substantive].
+
+dative(Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    adjective(Adjective),
+    declension(dat, singular, strong, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [DeclinatedAdjective, Substantive].
+
+dative(Article, Adjective, Substantive, Out) :-
+    subs(Substantive, Gender),
+    article(dat, singular, Gender, strong, Article),
+    adjective(Adjective),
+    declension(dat, singular, weak, Gender, Ending),
+    string_concat(Adjective, Ending, DeclinatedAdjective),
+    Out = [Article, DeclinatedAdjective, Substantive].
