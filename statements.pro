@@ -1,20 +1,21 @@
-statement(S, V, O, svo) :-
-    (   nominative(ArticleS, _SubstantiveS, S),
-        article(nom, Plurality, _Gender, _Sow, ArticleS)
+statement(svo(S, V, O)) :-
+    (   nominative(ArticleS, SubstantiveS, S),
+        article(nom, Gender, _Sow, ArticleS),
+        substantive_gender(SubstantiveS, Gender)
     ; 
-        Plurality = singular,
-        nominative(AdjectiveS, _SubstantiveS, S),
-        adjective(AdjectiveS)
+        nominative(AdjectiveS, SubstantiveS, S),
+        adjective(AdjectiveS),
+        substantive_gender(SubstantiveS, Gender)
     ;
-        nominative(ArticleS, AdjectiveS, _SubstantiveS, S),
-        article(nom, Plurality, _Gender, _Sow, ArticleS),
+        nominative(ArticleS, AdjectiveS, SubstantiveS, S),
+        article(nom, Gender, _Sow, ArticleS),
+        substantive_gender(SubstantiveS, Gender),
         adjective(AdjectiveS)
     ),
-    
+    gender_plurality(Gender, Plurality),
     verb(V0, vt),
     conjugation(Plurality, present, V0, V),
 
-    
     (   accusative(_ArticleO, _SubstantiveO, O)
     ; 
         accusative(Adjective, _SubstantiveO, O),
@@ -24,44 +25,21 @@ statement(S, V, O, svo) :-
         adjective(AdjectiveO)
     ).
 
-statement(O, V, S, ovs) :-
-    (   nominative(ArticleS, _SubstantiveS, S),
-        article(nom, Plurality, _Gender, _Sow, ArticleS)
-    ; 
-        Plurality = singular,
-        nominative(AdjectiveS, _SubstantiveS, S),
-        adjective(AdjectiveS)
-    ;
-        nominative(ArticleS, AdjectiveS, _SubstantiveS, S),
-        article(nom, Plurality, _Gender, _Sow, ArticleS),
-        adjective(AdjectiveS)
-    ),
-    
-    verb(V0, vt),
-    conjugation(Plurality, present, V0, V),
-    
-    (   accusative(_ArticleO, _SubstantiveO, O)
-    ; 
-        accusative(Adjective, _SubstantiveO, O),
-        adjective(Adjective)
-    ;
-        accusative(_ArticleO, AdjectiveO, _SubstantiveO, O),
-        adjective(AdjectiveO)
-    ).
+statement(ovs(O, V, S)) :-
+    statement(svo(S, V, O)).
 
-statement_tokens(SorO, V, OorS, Tokens) :-
-    statement(SorO, V, OorS, _Ordering),
-    (   SorO = [ArticleOrAdjectiveS, SubstantiveS],
-        OorS = [ArticleOrAdjectiveO, SubstantiveO],
-        Tokens = [ArticleOrAdjectiveS, SubstantiveS, V, ArticleOrAdjectiveO, SubstantiveO]
-    ;   SorO = [ArticleOrAdjectiveS, SubstantiveS],
-        OorS = [ArticleO, AdjectiveO, SubstantiveO],
-        Tokens = [ArticleOrAdjectiveS, SubstantiveS, V, ArticleO, AdjectiveO, SubstantiveO]
-    ;   SorO = [ArticleS, AdjectiveS, SubstantiveS],
-        OorS = [ArticleOrAdjectiveO, SubstantiveO],
-        Tokens = [ArticleS, AdjectiveS, SubstantiveS, V, ArticleOrAdjectiveO, SubstantiveO]
+%% statement_tokens(?Statement, ?Ordering, ?Tokens)
+%% ? Statement :: svo(S, V, O) or ovs(O, V, S)
+%% ? Ordering  :: How grammatical elments are serialized in token list
+%% ? Tokens    :: Token list
+statement_tokens(Statement, Ordering, Tokens) :-
+    (   Ordering = svo,
+        svo(S, V, O) = Statement,
+        statement(svo(S, V, O)),
+        append([S, [V], O], Tokens)
     ;
-        SorO = [ArticleS, AdjectiveS, SubstantiveS],
-        OorS = [ArticleO, AdjectiveO, SubstantiveO],
-        Tokens = [ArticleS, AdjectiveS, SubstantiveS, V, ArticleO, AdjectiveO, SubstantiveO]
+        Ordering = ovs,
+        ovs(O, V, S) = Statement,
+        statement(ovs(O, V, S)),
+        append([O, [V], S], Tokens)
     ).

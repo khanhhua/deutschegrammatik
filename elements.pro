@@ -1,3 +1,14 @@
+substantive_gender(Substantive, Gender) :-
+    (   subs(Substantive, _, Gender)
+    ;   subs(_, Substantive, _),
+        Gender = plu
+    ).
+
+gender_plurality(mas, singular).
+gender_plurality(fem, singular).
+gender_plurality(neu, singular).
+gender_plurality(plu, plural).
+
 definite("der").
 definite("die").
 definite("das").
