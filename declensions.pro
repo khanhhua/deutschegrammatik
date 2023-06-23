@@ -99,7 +99,7 @@ declension(dat, strong, plu, "en").
 sow_complement(weak, strong).
 sow_complement(strong, weak).
 
-nominative(Article, Substantive, Out) :-
+nominative([Article, Substantive], Analyzed) :-
     substantive_gender(Substantive, Gender),
     article(nom, Gender, Sow, Article),
     (   definite(Article) ->
@@ -107,79 +107,100 @@ nominative(Article, Substantive, Out) :-
     ;   indefinite(Article) ->
         Sow = weak
     ),
-    Out = [Article, Substantive].
+    Analyzed = an(Article, Substantive)
+    .
 
-nominative(Adjective, Substantive, Out) :-
+nominative(Tokens, Analyzed) :-
+    is_list(Tokens),
+    (   append(DeclinatedAdjectives, [Substantive], Tokens),
+        substantive_gender(Substantive, Gender),
+
+        declension(nom, strong, Gender, Ending),
+        maplist([Adjective, DeclinatedAdjective] >> 
+            (   string_concat(Adjective, Ending, DeclinatedAdjective),
+                adjective(Adjective)
+            ), Adjectives, DeclinatedAdjectives),
+        Analyzed = an(Adjectives, Substantive)
+    ;   append([[Article], DeclinatedAdjectives, [Substantive]], Tokens),
+        substantive_gender(Substantive, Gender),
+        article(nom, Gender, SowArticle, Article),
+        sow_complement(SowArticle, SowAdjective),
+
+        declension(nom, SowAdjective, Gender, Ending),
+        maplist([Adjective, DeclinatedAdjective] >> 
+            (   string_concat(Adjective, Ending, DeclinatedAdjective),
+                adjective(Adjective)
+            ), Adjectives, DeclinatedAdjectives),
+        Analyzed = aan(Article, Adjectives, Substantive)
+    )
+    .
+
+
+accusative([Article, Substantive], Analyzed) :-
     substantive_gender(Substantive, Gender),
-    adjective(Adjective),
-    declension(nom, strong, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [DeclinatedAdjective, Substantive].
-
-nominative(Article, Adjective, Substantive, Out) :-
-    substantive_gender(Substantive, Gender),
-    article(nom, Gender, SowArticle, Article),
-    adjective(Adjective),
-    sow_complement(SowArticle, SowAdjective),
-    declension(nom, SowAdjective, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [Article, DeclinatedAdjective, Substantive],
-    ( definite(Article) ->
-        SowArticle = strong
-    ; indefinite(Article) ->
-        SowArticle = weak
-    ).
-
-
-accusative(Article, Substantive, Out) :-
-    substantive_gender(Substantive, Gender),
-    article(acc, Gender, SowArticle, Article),
-    ( definite(Article) ->
-        SowArticle = strong
-    ; indefinite(Article) ->
-        SowArticle = weak
+    article(acc, Gender, Sow, Article),
+    (   definite(Article) ->
+        Sow = strong
+    ;   indefinite(Article) ->
+        Sow = weak
     ),
-    Out = [Article, Substantive].
+    Analyzed = an(Article, Substantive)
+    .
 
-accusative(Adjective, Substantive, Out) :-
-    substantive_gender(Substantive, Gender),
-    adjective(Adjective),
-    declension(acc, strong, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [DeclinatedAdjective, Substantive].
+accusative(Tokens, Analyzed) :-
+    is_list(Tokens),
+    (   append(DeclinatedAdjectives, [Substantive], Tokens),
+        substantive_gender(Substantive, Gender),
 
-accusative(Article, Adjective, Substantive, Out) :-
-    substantive_gender(Substantive, Gender),
-    article(acc, Gender, SowArticle, Article),
-    adjective(Adjective),
-    sow_complement(SowArticle, SowAdjective),
-    declension(acc, SowAdjective, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [Article, DeclinatedAdjective, Substantive],
-    ( definite(Article) ->
-        SowArticle = strong
-    ; indefinite(Article) ->
-        SowArticle = weak
-    ).
+        declension(acc, strong, Gender, Ending),
+        maplist([Adjective, DeclinatedAdjective] >> 
+            (   string_concat(Adjective, Ending, DeclinatedAdjective),
+                adjective(Adjective)
+            ), Adjectives, DeclinatedAdjectives),
+        Analyzed = an(Adjectives, Substantive)
+    ;   append([[Article], DeclinatedAdjectives, [Substantive]], Tokens),
+        substantive_gender(Substantive, Gender),
+        article(acc, Gender, SowArticle, Article),
+        sow_complement(SowArticle, SowAdjective),
+
+        declension(acc, SowAdjective, Gender, Ending),
+        maplist([Adjective, DeclinatedAdjective] >> 
+            (   string_concat(Adjective, Ending, DeclinatedAdjective),
+                adjective(Adjective)
+            ), Adjectives, DeclinatedAdjectives),
+        Analyzed = aan(Article, Adjectives, Substantive)
+    )
+    .
 
 
-dative(Article, Substantive, Out) :-
+dative([Article, Substantive], Analyzed) :-
     substantive_gender(Substantive, Gender),
     article(dat, Gender, SowArticle, Article),
     SowArticle = strong,
-    Out = [Article, Substantive].
+    Analyzed = an(Article, Substantive)
+    .
 
-dative(Adjective, Substantive, Out) :-
-    substantive_gender(Substantive, Gender),
-    adjective(Adjective),
-    declension(dat, strong, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [DeclinatedAdjective, Substantive].
+dative(Tokens, Analyzed) :-
+    is_list(Tokens),
+    (   append(DeclinatedAdjectives, [Substantive], Tokens),
+        substantive_gender(Substantive, Gender),
 
-dative(Article, Adjective, Substantive, Out) :-
-    substantive_gender(Substantive, Gender),
-    article(dat, Gender, strong, Article),
-    adjective(Adjective),
-    declension(dat, weak, Gender, Ending),
-    string_concat(Adjective, Ending, DeclinatedAdjective),
-    Out = [Article, DeclinatedAdjective, Substantive].
+        maplist([Adjective, DeclinatedAdjective] >> 
+            (   declension(dat, strong, Gender, Ending),
+                string_concat(Adjective, Ending, DeclinatedAdjective),
+                adjective(Adjective)
+            ), Adjectives, DeclinatedAdjectives),
+        Analyzed = an(Adjectives, Substantive)
+    ;   append([[Article], DeclinatedAdjectives, [Substantive]], Tokens),
+        substantive_gender(Substantive, Gender),
+        article(dat, Gender, SowArticle, Article),
+        SowArticle = strong,
+
+        maplist([Adjective, DeclinatedAdjective] >> 
+            (   declension(dat, weak, Gender, Ending),
+                string_concat(Adjective, Ending, DeclinatedAdjective),
+                adjective(Adjective)
+            ), Adjectives, DeclinatedAdjectives),
+        Analyzed = aan(Article, Adjectives, Substantive)
+    )
+    .
