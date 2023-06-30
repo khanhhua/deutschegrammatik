@@ -14,9 +14,13 @@ prefix("weg").
 prefix("zu").
 prefix("zurück").
 
-verb("sehen", vt).
-verb("ansehen", vt).
-verb("zusehen", vt).
+verb("arbeiten").
+verb("sehen").
+verb("ansehen").
+verb("zusehen").
 
 conjugation(singular, present, "sehen", "sieht").
 conjugation(plural, present, "sehen", "sehen").
+
+conjugation(singular, present, "arbeiten", "arbeitet").
+conjugation(plural, present, "arbeiten", "arbeiten").

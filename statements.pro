@@ -1,8 +1,10 @@
 %% statement(?Tokens, ?Statement)
 %% ? Tokens    :: Token list
-%% ? Statement :: svo(S, V, O) or ovs(O, V, S)
+%% ? Statement ::
+%%      svo(S, pvo(V, O))
+%%      svo(S, pv(V))
 
-statement(Tokens, svo(Nominative, V0, Accusative)) :-
+statement(Tokens, svo(Nominative, Predicate)) :-
     is_list(Tokens),
     member(V, Tokens),
     (   append(TokenWithoutPrefix, [Prefix], Tokens),
@@ -10,11 +12,11 @@ statement(Tokens, svo(Nominative, V0, Accusative)) :-
         
         conjugation(Plurality, present, V0NoPrefix, V),
         append(Prefix, V0NoPrefix, V0),
-        verb(V0, vt),
+        verb(V0),
         append([S_Tokens, [V], O_Tokens], TokenWithoutPrefix)
     ;
         conjugation(Plurality, present, V0, V),
-        verb(V0, vt),
+        verb(V0),
         append([S_Tokens, [V], O_Tokens], Tokens)
     ),
     
@@ -27,7 +29,10 @@ statement(Tokens, svo(Nominative, V0, Accusative)) :-
         
     gender_plurality(Gender, Plurality),
 
-    accusative(O_Tokens, Accusative).
+    (   accusative(O_Tokens, Accusative),
+        Predicate = pvo(V0, Accusative)
+    ;
+        length(O_Tokens, 0),
+        Predicate = pv(V0)
+    ).
 
-statement(Tokens, ovs(O, V, S)) :-
-    statement(Tokens, svo(S, V, O)).
