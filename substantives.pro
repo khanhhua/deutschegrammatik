@@ -4,3 +4,5 @@
 subs("hund", "hünde", mas).
 subs("katze", "katzen", fem).
 subs("buch", "bücher", neu).
+
+subs("schule", "schulen", fem).
