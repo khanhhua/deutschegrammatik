@@ -1,5 +1,6 @@
 %% Exemplary list of nouns in German.
-%% subs(noun, gender)
+%% subs(noun, plural, gender)
+:- dynamic(subs/3).
 
 subs("hund", "hünde", mas).
 subs("katze", "katzen", fem).
