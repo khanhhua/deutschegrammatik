@@ -44,18 +44,27 @@ statement(Tokens, svao(Nominative, Predicate)) :-
     is_list(Tokens),   
     member(V, Tokens),
     
-    (   append(TokenWithoutPrefix, [Prefix], Tokens),
+    (   append(TokensWithoutPrefix, [Prefix], Tokens),
         prefix(Prefix),
         
         conjugation(Plurality, present, V0NoPrefix, V),
         append(Prefix, V0NoPrefix, V0),
         verb(V0),
-        append([Adv_Tokens, [V], S_Tokens, O_Tokens], TokenWithoutPrefix)
+        append([Adv_TokensPart1, [V], S_Tokens, Adv_TokensPart2, O_Tokens], TokensWithoutPrefix),
+        
+        length(Adv_TokensPart1, LengthAdvTokens), LengthAdvTokens > 0,
+        adverbials(Adv_TokensPart1, Adverbials_Part1),
+        adverbials(Adv_TokensPart2, Adverbials_Part2),
+        append(Adverbials_Part1, Adverbials_Part2, Adverbials)
     ;
         conjugation(Plurality, present, V0, V),
         verb(V0),
-        append([Adv_Tokens, [V], S_Tokens, O_Tokens], Tokens),
-        length(Adv_Tokens, LengthAdvTokens), LengthAdvTokens > 0
+        append([Adv_TokensPart1, [V], S_Tokens, Adv_TokensPart2, O_Tokens], Tokens),
+        
+        length(Adv_TokensPart1, LengthAdvTokens), LengthAdvTokens > 0,
+        adverbials(Adv_TokensPart1, Adverbials_Part1),
+        adverbials(Adv_TokensPart2, Adverbials_Part2),
+        append(Adverbials_Part1, Adverbials_Part2, Adverbials)
     ),
 
     nominative(S_Tokens, Nominative),
@@ -66,7 +75,7 @@ statement(Tokens, svao(Nominative, Predicate)) :-
     substantive_gender(Substantive, Gender),
     gender_plurality(Gender, Plurality),
 
-    adverbials(Adv_Tokens, Adverbials),
+    
     (   accusative(O_Tokens, Accusative),
         Predicate = pvao(V0, Adverbials, Accusative)
     ;
