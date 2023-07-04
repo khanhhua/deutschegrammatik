@@ -1,3 +1,6 @@
+:- dynamic(verb/1).
+:- dynamic(conjugation/4).
+
 prefix("ab").
 prefix("an").
 prefix("auf").

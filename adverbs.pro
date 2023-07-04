@@ -1,3 +1,5 @@
+:- dynamic(adverb/1).
+
 adverb("taglich").
 adverb("morgens").
 adverb("abends").
