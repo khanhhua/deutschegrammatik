@@ -18,12 +18,12 @@ prefix("zu").
 prefix("zurück").
 prefix("fest").
 
-verb("arbeiten").
-verb("sehen").
-verb("ansehen").
-verb("zusehen").
-verb("gehen").
-verb("kommen").
+% verb("arbeiten").
+% verb("sehen").
+% verb("ansehen").
+% verb("zusehen").
+% verb("gehen").
+% verb("kommen").
 
 conjugation(singular, present, "sehen", "sieht").
 conjugation(plural, present, "sehen", "sehen").
