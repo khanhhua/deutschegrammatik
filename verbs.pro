@@ -28,8 +28,7 @@ conjugation(singular, present, "sehen", "sieht").
 conjugation(plural, present, "sehen", "sehen").
 
 conjugation(singular, present, V0, V_conjugated) :-
-    length(V0, V0Length),
-    length(V_conjugated, CLength),
+    verb(V0),
     append(Stem, "en", V0),
     (   append(_, "t", Stem),
         append(Stem, "et", V_conjugated)
