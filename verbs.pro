@@ -16,6 +16,7 @@ prefix("vor").
 prefix("weg").
 prefix("zu").
 prefix("zurück").
+prefix("fest").
 
 verb("arbeiten").
 verb("sehen").
@@ -26,12 +27,14 @@ verb("gehen").
 conjugation(singular, present, "sehen", "sieht").
 conjugation(plural, present, "sehen", "sehen").
 
-conjugation(singular, present, V0, V_conjugated) :-
-    append(Stem, "en", V0),
-    (   append(_, "t", Stem),
-        append(Stem, "et", V_conjugated)
-    ;
-        append(Stem, "t", V_conjugated)
-    )
-    .
-conjugation(plural, present, V0, V0).
+% conjugation(singular, present, V0, V_conjugated) :-
+%     length(V0, V0Length),
+%     length(V_conjugated, CLength),
+%     append(Stem, "en", V0),
+%     (   append(_, "t", Stem),
+%         append(Stem, "et", V_conjugated)
+%     ;
+%         append(Stem, "t", V_conjugated)
+%     )
+%     .
+% conjugation(plural, present, V0, V0).
