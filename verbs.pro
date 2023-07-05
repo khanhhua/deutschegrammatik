@@ -23,6 +23,7 @@ verb("sehen").
 verb("ansehen").
 verb("zusehen").
 verb("gehen").
+verb("kommen").
 
 conjugation(singular, present, "sehen", "sieht").
 conjugation(plural, present, "sehen", "sehen").
