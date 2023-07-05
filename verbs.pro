@@ -26,8 +26,12 @@ verb("gehen").
 conjugation(singular, present, "sehen", "sieht").
 conjugation(plural, present, "sehen", "sehen").
 
-conjugation(singular, present, "arbeiten", "arbeitet").
-conjugation(plural, present, "arbeiten", "arbeiten").
-
-conjugation(singular, present, "gehen", "geht").
-conjugation(plural, present, "gehen", "gehen").
+conjugation(singular, present, V0, V_conjugated) :-
+    append(Stem, "en", V0),
+    (   append(_, "t", Stem),
+        append(Stem, "et", V_conjugated)
+    ;
+        append(Stem, "t", V_conjugated)
+    )
+    .
+conjugation(plural, present, V0, V0).
